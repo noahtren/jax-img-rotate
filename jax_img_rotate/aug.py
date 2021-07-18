@@ -48,8 +48,8 @@ def get_mat(rotation, shear, height_zoom, width_zoom, height_shift,
                    np.matmul(zoom_matrix, shift_matrix))
 
 
-def transform_batch(rng, images, max_rot_deg, max_shear_deg, max_zoom_diff_pct,
-                    max_shift_pct):
+def transform_batch(rng, images, max_rot_deg, max_shear_deg, zoom_min,
+                    zoom_max, max_shift_pct):
   """Transform a batch of square images with the same randomized affine
   transformation.
   """
@@ -69,9 +69,9 @@ def transform_batch(rng, images, max_rot_deg, max_shear_deg, max_zoom_diff_pct,
   shr, rng = clipped_random(rng)
   shr = shr * max_shear_deg
   h_zoom, rng = clipped_random(rng)
-  h_zoom = 1.0 + h_zoom * max_zoom_diff_pct
+  h_zoom = 1.0 + np.abs(h_zoom) * ((zoom_max - zoom_min) + zoom_min)
   w_zoom, rng = clipped_random(rng)
-  w_zoom = 1.0 + w_zoom * max_zoom_diff_pct
+  w_zoom = 1.0 + np.abs(w_zoom) * ((zoom_max - zoom_min) + zoom_min)
   h_shift, rng = clipped_random(rng)
   h_shift = h_shift * (DIM * max_shift_pct)
   w_shift, rng = clipped_random(rng)
